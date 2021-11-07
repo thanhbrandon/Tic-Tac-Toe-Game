@@ -35,27 +35,39 @@ string name(bool currentPlayer) { // The name function assigns the name of the p
 char symbol(bool currentPlayer) { // The name function assigns the name of the player
     if (currentPlayer == true) {
         return 'X';
-
     }
     else {
         return 'O';
-
     }
 }
 
 bool gameLogic(char gamePosition[3][3]) { // The gameLogic function checks if there is a winner
     for (int i = 0; i < 3; i++) { // Finds horizontal and vertical win condition
-        if (gamePosition[i][0] == gamePosition[i][1] == gamePosition[i][2]) {
+        if (gamePosition[i][0] == 'X' && gamePosition[i][1] == 'X' && gamePosition[i][2] == 'X') {          
             return true;
         }
-        else if (gamePosition[0][i] == gamePosition[1][i] == gamePosition[2][i]) {
+        else if (gamePosition[0][i] == 'X' && gamePosition[1][i] == 'X' && gamePosition[2][i] == 'X') {
+            
+            return true;
+        }
+        if (gamePosition[i][0] == 'O' && gamePosition[i][1] == 'O' && gamePosition[i][2] == 'O') {
+            return true;
+        }
+        else if (gamePosition[0][i] == 'O' && gamePosition[1][i] == 'O' && gamePosition[2][i] == 'O') {
+
             return true;
         }
     }
-    if (gamePosition[0][0] == gamePosition[1][1] == gamePosition[2][2]) { // Finds diagonal win condition
+    if (gamePosition[0][0] == 'X' && gamePosition[1][1] == 'X' && gamePosition[2][2] == 'X') { // Finds diagonal win condition
         return true;
     }
-    else if (gamePosition[0][2] == gamePosition[1][1] == gamePosition[2][0]) { // Finds diagonal win condition
+    else if (gamePosition[0][2] == 'X' && gamePosition[1][1] == 'X' && gamePosition[2][0] == 'X') { // Finds diagonal win condition
+        return true;
+    }
+    if (gamePosition[0][0] == 'O' && gamePosition[1][1] == 'O' && gamePosition[2][2] == 'O') { // Finds diagonal win condition
+        return true;
+    }
+    else if (gamePosition[0][2] == 'O' && gamePosition[1][1] == 'O' && gamePosition[2][0] == 'O') { // Finds diagonal win condition
         return true;
     }
     return false;
@@ -99,49 +111,62 @@ bool userInput(bool currentPlayer, char gamePosition[3][3], int *row, int *colum
         else {
             validSpot = true;
         }
-
     }
     return true;
-    
 }
 
-
 void main() {
+    // Intializes variables  
     bool currentPlayer = true;
-    char playAgain = ' ';
     bool gameOn = true;
     bool gameWon = false;
 
     while (gameOn == true) {
         char gamePosition[3][3] = { {'*','*','*'}, 
                                     {'*','*','*'}, 
-                                    {'*','*','*'}};
-        while (gameWon == false) {
-            system("cls");
-            graphics(gamePosition);
+                                    {'*','*','*'}}; // Intializes gameboard and resets it
+        int turnCounter = 0; // Counts the number of turns
+        char playAgain = ' ';
+        graphics(gamePosition); // Displays game graphics
+        while (gameWon == false) { // While loop that keeps game on
             int row = 0;
             int column = 0;
             bool validSpot = false;
-            while (validSpot == false) {
+            while (validSpot == false) { // Checks if spot is valid
                 string playerName = name(currentPlayer);               
                 validSpot = userInput(currentPlayer, gamePosition, &row, &column);
             }
             char currentChar = symbol(currentPlayer);
-            gamePosition[row - 1][column - 1] = currentChar;
+            gamePosition[row - 1][column - 1] = currentChar; // Assigns place in gameboard with current symbol
             gameWon = gameLogic(gamePosition);
-            currentPlayer = !currentPlayer;
+            system("cls"); // Clears screen to make game more fluid
+            graphics(gamePosition); // Reprints gameboard
+            if (gameWon == true) { // Ends and congratulates the winner 
+                string playerName = name(currentPlayer);
+                cout << setw(19) << "Congradulations " << playerName << "! You Win!\n";
+                break;
+            }
+            currentPlayer = !currentPlayer; // Changes player at the end of each turn
+            turnCounter++;
+            if (turnCounter > 8) { // Ends game if there is a tie
+                cout << setw(25) << "Tie Game! Nobody Wins!" << endl;
+                break;
+            }
          }
-        string playerName = name(currentPlayer);
-        cout << "Congradulations " << playerName << "! You Win!\n";
-
-        while (playAgain != 'y' && playAgain != 'n') {
-            cout << "Would you like to play again? (y/n) ";
+        
+        while (playAgain != 'y' && playAgain != 'n') { // while loop ask if players want to play again
+            cout << setw(39) << "Would you like to play again? (y/n) ";
             cin >> playAgain;
             if (playAgain != 'y' && playAgain != 'n') {
-                cout << "Invalid Response!\n";
-                cout << "Would you like to play again? (y/n) ";
+                cout << setw(21) << "Invalid Response!\n";
             }
         }
+        if (playAgain == 'n') {
+            gameOn = false;
+        }
+        if (playAgain == 'y') {
+            gameWon = false;
+            system("cls");
+        }
      }
-
  }
